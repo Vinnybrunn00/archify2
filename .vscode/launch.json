@@ -1,0 +1,55 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Xiaomi Home",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "192.168.0.105:55555",
+        },
+        {
+            "name": "Xiaomi Facape",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "192.168.1.239:55555",
+        },
+        {
+            "name": "Pixel 10 Pro",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554",
+        },
+        {
+            "name": "Pixel 10 Pro (2)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5556",
+        },
+        {
+            "name": "Xiaomi Home Mother",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "192.168.0.103:55555",
+        },
+        {
+            "name": "Linux",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "linux",
+        },
+        
+    ], 
+    "compounds": [
+        {
+            "name": "All Devices",
+            "configurations": [
+                //"Xiaomi Facape",
+                "Xiaomi Home",
+                "Linux"
+                //"Xiaomi Home Mother",
+                //"Pixel 10 Pro",
+                //"Pixel 10 Pro (2)",
+            ]
+        }
+    ]
+}
