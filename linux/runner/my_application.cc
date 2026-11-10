@@ -25,6 +25,18 @@ static void my_application_activate(GApplication* application) {
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 
+  // Transparent window: needed for the rounded corners drawn by Flutter.
+  GdkScreen* rgba_screen = gtk_window_get_screen(window);
+  GdkVisual* rgba_visual = gdk_screen_get_rgba_visual(rgba_screen);
+  if (rgba_visual != nullptr) {
+    gtk_widget_set_visual(GTK_WIDGET(window), rgba_visual);
+  }
+  gtk_widget_set_app_paintable(GTK_WIDGET(window), TRUE);
+  // Frameless here instead of window.setFrameless() in Dart: nativeapi 0.5.10
+  // adds a shadow gutter on Linux and computes a smaller input region, which
+  // makes the right/bottom edges of the window ignore clicks.
+  gtk_window_set_decorated(window, FALSE);
+
   // Use a header bar when running in GNOME as this is the common style used
   // by applications and is the setup most users will be using (e.g. Ubuntu
   // desktop).
@@ -32,7 +44,8 @@ static void my_application_activate(GApplication* application) {
   // in case the window manager does more exotic layout, e.g. tiling.
   // If running on Wayland assume the header bar will work (may need changing
   // if future cases occur).
-  gboolean use_header_bar = TRUE;
+  // Frameless window: no GTK header bar (the title bar is drawn by Flutter).
+  gboolean use_header_bar = FALSE;
 #ifdef GDK_WINDOWING_X11
   GdkScreen* screen = gtk_window_get_screen(window);
   if (GDK_IS_X11_SCREEN(screen)) {
@@ -62,7 +75,7 @@ static void my_application_activate(GApplication* application) {
   GdkRGBA background_color;
   // Background defaults to black, override it here if necessary, e.g. #00000000
   // for transparent.
-  gdk_rgba_parse(&background_color, "#000000");
+  gdk_rgba_parse(&background_color, "#00000000");
   fl_view_set_background_color(view, &background_color);
   gtk_widget_show(GTK_WIDGET(view));
   gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(view));
