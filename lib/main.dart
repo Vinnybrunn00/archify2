@@ -1,24 +1,38 @@
-import 'package:archify2/core/providers/file_system_provider.dart';
-import 'package:archify2/ui/pages/home_page.dart';
+import 'dart:io';
+
+import 'package:archify2/archify2/archify2.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // setta o gerenciamento de janela somente para Desktop(linux/windows)
+  if (Platform.isWindows || Platform.isLinux) {
+    _setWindowManager();
+  }
+
+  // Archify2 em lib/archify2/archify2.dart
   runApp(const Archify2());
 }
 
-class Archify2 extends StatelessWidget {
-  const Archify2({super.key});
+void _setWindowManager() {
+  final Window? window = WindowManager.instance.getCurrent();
 
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => FileSystemProvider())],
-      child: MaterialApp(
-        title: 'Archify2',
-        theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-        home: HomePage(),
-      ),
-    );
+  final Size size = Size(1080, 860);
+
+  window?.setSize(size.toNative(), false);
+  window?.minimumSize = size.toNative();
+  window?.maximumSize = size.toNative();
+  window?.isAlwaysOnTop = true;
+  window?.isMaximizable = false;
+  if (Platform.isWindows) {
+    window?.titleBarStyle = TitleBarStyle.hidden;
+    window?.setFrameless(true);
+    window?.hasShadow = false;
+    window?.backgroundColor = Colors.transparent.toNative();
   }
+  window?.center();
+  window?.show();
+  window?.focus();
 }
