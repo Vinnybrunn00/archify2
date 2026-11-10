@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:archify2/core/factory/file_manager.dart';
 import 'package:archify2/core/providers/file_system_provider.dart';
 import 'package:archify2/ui/components/animated/animated_path.dart';
@@ -7,6 +9,7 @@ import 'package:archify2/ui/themes/app_colors.dart';
 import 'package:iconsx_plus/iconsx_plus.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 class HomePage extends StatelessWidget {
   const new({super.key});
@@ -20,21 +23,39 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.backgroundColorWhite,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: AppColor.backgroundColorWhite,
-        surfaceTintColor: Colors.transparent,
-        leading: provider.canGoBack
-            ? GestureDetector(
-                onTap: () => provider.goBackFolders(),
-                child: const Icon(BoxIcons.bx_arrow_back),
-              )
-            : null,
         title: Text(
           'Archify',
           style: TextStyle(fontSize: 23),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
+        leading: provider.canGoBack
+            ? MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () => provider.goBackFolders(),
+                  child: const Icon(BoxIcons.bx_arrow_back),
+                ),
+              )
+            : null,
+        actions: [
+          // mostra os botões de minizar e fechar a jenala somente no linux/windows.
+          if (Platform.isLinux || Platform.isWindows) ...[
+            _WindowButton(
+              icon: Icons.remove,
+              tooltip: 'Minimizar',
+              onPressed: () => WindowManager.instance.getCurrent()?.minimize(),
+            ),
+            SizedBox(width: 5),
+            _WindowButton(
+              icon: Icons.close,
+              tooltip: 'Fechar',
+              onPressed: () => WindowManager.instance.getCurrent()?.close(),
+            ),
+          ],
+        ],
+        actionsPadding: .only(right: 15),
       ),
 
       body: Column(
@@ -50,10 +71,14 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: AnimatedPath(path: provider.showRelativePath!),
                   ),
-                GestureDetector(
-                  onTap: () async => await provider.createFolder('nova-pasta2'),
+                MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () async =>
+                        await provider.createFolder('nova-pasta2'),
 
-                  child: Icon(EvaIcons.folder_add_outline, size: 19),
+                    child: Icon(EvaIcons.folder_add_outline, size: 19),
+                  ),
                 ),
               ],
             ),
@@ -90,6 +115,42 @@ class HomePage extends StatelessWidget {
               : null,
         );
       },
+    );
+  }
+}
+
+class _WindowButton extends StatelessWidget {
+  const _WindowButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onPressed,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 120),
+            width: 36,
+            height: 36,
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            decoration: BoxDecoration(
+              color: AppColor.blackColorAlpha55.withAlpha(10),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 18, color: AppColor.backgroundColorBlack),
+          ),
+        ),
+      ),
     );
   }
 }
