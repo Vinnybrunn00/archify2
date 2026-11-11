@@ -16,4 +16,5 @@ abstract final class AppColor {
   static final Color backgroundColorBlack = Color(0xFF101720);
   static final Color blackColorAlpha55 = Colors.black.withAlpha(55);
   static final Color blackColorAlpha70 = Colors.black.withAlpha(70);
+  static final Color pinkColor = const Color(0xFFD900FF).withAlpha(70);
 }
