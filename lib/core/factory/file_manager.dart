@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:archify2/core/constants/regex_patterns.dart';
 import 'package:archify2/core/models/file_types.dart';
+import 'package:archify2/core/models/icon_color_from_file.dart';
 import 'package:archify2/ui/themes/app_colors.dart';
-import 'package:flutter/material.dart';
 import 'package:iconsx_plus/iconsx_plus.dart';
+import 'package:material_ui/material_ui.dart';
 
 class FileManager {
   final String path;
-  final IconData icon;
-  final Color? iconColor;
+  final IconColorFromFile iconDetails;
   final String name;
   final bool isDirectory;
   final bool isFile;
@@ -19,8 +19,7 @@ class FileManager {
 
   FileManager({
     required this.path,
-    required this.icon,
-    this.iconColor,
+    required this.iconDetails,
     required this.name,
     required this.isDirectory,
     required this.isFile,
@@ -37,8 +36,7 @@ class FileManager {
 
     return FileManager(
       path: path,
-      icon: _showIconsTypeFileAndFolder(fileStat, path),
-      iconColor: _switchIconColor(fileStat, path),
+      iconDetails: _showIconsTypeFileAndFolder(fileStat, path),
       name: _formatPath(path),
       isDirectory: _isDirectory(fileStat),
       isFile: _isFile(fileStat),
@@ -127,83 +125,75 @@ class FileManager {
     isWord: wordExtRegex.hasMatch(path),
   );
 
-  static IconData _showIconsTypeFileAndFolder(FileStat fileStats, String path) {
+  static IconColorFromFile _showIconsTypeFileAndFolder(
+    FileStat fileStats,
+    String path,
+  ) {
     final FileTypes fileTypes = _fileTypes(path);
 
     if (fileStats.type == FileSystemEntityType.file) {
       return _switchIconFiles(fileTypes);
     }
 
-    return BoxIcons.bxs_folder;
+    return IconColorFromFile(
+      icon: BoxIcons.bxs_folder,
+      color: AppColor.cyanColor,
+    );
   }
 
-  static IconData _switchIconFiles(FileTypes fileTypes) {
+  static IconColorFromFile _switchIconFiles(FileTypes fileTypes) {
     if (fileTypes.isWord) {
-      return AntDesign.file_word_outline;
+      return IconColorFromFile(
+        icon: AntDesign.file_word_outline,
+        color: AppColor.blackColor,
+      );
     }
 
     if (fileTypes.isCode) {
-      return LineAwesome.file_code;
+      return IconColorFromFile(
+        icon: LineAwesome.file_code,
+        color: AppColor.greenColor,
+      );
     }
 
     if (fileTypes.isAudio) {
-      return EvaIcons.music_outline;
+      return IconColorFromFile(
+        icon: EvaIcons.music_outline,
+        color: AppColor.purpleColor,
+      );
     }
 
     if (fileTypes.isVideo) {
-      return EvaIcons.video_outline;
+      return IconColorFromFile(
+        icon: EvaIcons.video_outline,
+        color: AppColor.pinkColor,
+      );
     }
 
     if (fileTypes.isText) {
-      return AntDesign.file_text_outline;
+      return IconColorFromFile(
+        icon: AntDesign.file_text_outline,
+        color: AppColor.blackColor,
+      );
     }
 
     if (fileTypes.isPdf) {
-      return AntDesign.file_pdf_outline;
+      return IconColorFromFile(
+        icon: AntDesign.file_pdf_outline,
+        color: AppColor.redColor,
+      );
     }
 
     if (fileTypes.isImage) {
-      return AntDesign.file_image_fill;
+      return IconColorFromFile(
+        icon: AntDesign.file_image_fill,
+        color: Color(0xFF8C00FF),
+      );
     }
 
-    return EvaIcons.question_mark;
-  }
-
-  static Color? _switchIconColor(FileStat fileStats, String path) {
-    final FileTypes fileTypes = _fileTypes(path);
-
-    if (fileStats.type == FileSystemEntityType.directory) {
-      return AppColor.cyanColor;
-    }
-
-    if (fileTypes.isWord) {
-      return AppColor.blackBlue;
-    }
-
-    if (fileTypes.isCode) {
-      return AppColor.greenColor;
-    }
-
-    if (fileTypes.isAudio) {
-      return AppColor.purpleColor;
-    }
-
-    if (fileTypes.isVideo) {
-      return AppColor.pinkColor;
-    }
-
-    if (fileTypes.isText) {
-      return AppColor.blackColor;
-    }
-
-    if (fileTypes.isPdf) {
-      return AppColor.redColor;
-    }
-
-    if (fileTypes.isImage) {
-      return const Color(0xFF8C00FF);
-    }
-
-    return AppColor.greyColor;
+    return IconColorFromFile(
+      icon: EvaIcons.question_mark,
+      color: AppColor.greyColor,
+    );
   }
 }
