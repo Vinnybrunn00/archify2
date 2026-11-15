@@ -45,13 +45,13 @@ class HomePage extends StatelessWidget {
             _WindowButton(
               icon: Icons.remove,
               tooltip: 'Minimizar',
-              onPressed: () => WindowManager.instance.getCurrent()?.minimize(),
+              onPressed: () async => await windowManager.minimize(),
             ),
             SizedBox(width: 5),
             _WindowButton(
               icon: Icons.close,
               tooltip: 'Fechar',
-              onPressed: () => WindowManager.instance.getCurrent()?.close(),
+              onPressed: () async => await windowManager.close(),
             ),
           ],
         ],
